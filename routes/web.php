@@ -40,5 +40,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('campaigns', App\Livewire\Campaigns\Index::class)->name('campaigns.index');
     Route::get('campaigns/create', App\Livewire\Campaigns\Create::class)->name('campaigns.create');
     Route::get('campaigns/{campaign}', App\Livewire\Campaigns\Show::class)->name('campaigns.show');
-    Route::get('campaigns/{campaign}/manage', App\Livewire\Campaigns\Manage::class)->name('campaigns.manage');
+    Route::get('/campaigns/{campaign}/manage', \App\Livewire\Campaigns\Manage::class)->name('campaigns.manage');
+
+    Route::get('/characters/{character}', \App\Livewire\Characters\Sheet::class)->name('characters.show');
 });

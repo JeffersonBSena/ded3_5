@@ -14,36 +14,63 @@
                 {{ __('No open campaigns found. Be the first to start one!') }}
             </div>
         @else
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Horizontal Carousel Container -->
+            <div class="flex gap-6 overflow-x-auto pb-8 snap-x snap-mandatory lg:no-scrollbar">
                 @foreach($campaigns as $campaign)
-                    <div class="space-y-4 p-6 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-xl">
-                        <div class="flex justify-between items-start">
-                            <div>
-                                <flux:heading size="lg">{{ $campaign->title }}</flux:heading>
-                                <flux:subheading>DM: {{ $campaign->user->name }}</flux:subheading>
+                    <!-- Vertical Card with Fixed Width -->
+                    <div class="min-w-[20rem] max-w-[20rem] snap-center group flex flex-col bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-xl overflow-hidden transition duration-200 hover:shadow-lg dark:hover:shadow-black/50 hover:border-zinc-300 dark:hover:border-zinc-600">
+                        <!-- Card Image & Status -->
+                        <div class="relative h-64 w-full bg-zinc-100 dark:bg-zinc-800 overflow-hidden">
+                            @if($campaign->image_path)
+                                <img src="{{ Storage::url($campaign->image_path) }}" 
+                                     alt="{{ $campaign->title }}" 
+                                     class="w-full h-full object-cover transition duration-500 group-hover:scale-105">
+                            @else
+                                <div class="w-full h-full flex items-center justify-center text-zinc-300 dark:text-zinc-700">
+                                    <flux:icon name="photo" class="w-12 h-12 opacity-50" />
+                                </div>
+                            @endif
+
+                            <div class="absolute top-3 right-3">
+                                <flux:badge color="{{ $campaign->status === 'open' ? 'green' : 'zinc' }}" inset="top right">
+                                    {{ ucfirst($campaign->status) }}
+                                </flux:badge>
                             </div>
-                            <flux:badge color="green">{{ ucfirst($campaign->status) }}</flux:badge>
                         </div>
 
-                        <p class="text-sm text-gray-600 dark:text-gray-400 line-clamp-3">
-                            {{ $campaign->description }}
-                        </p>
+                        <!-- Card Content -->
+                        <div class="flex flex-col flex-1 p-5 space-y-4">
+                            <!-- Header -->
+                            <div>
+                                <h3 class="text-xl font-bold text-gray-900 dark:text-white leading-tight">
+                                    {{ $campaign->title }}
+                                </h3>
+                                <p class="text-sm text-zinc-500 dark:text-zinc-400 mt-1">
+                                    DM: <span class="font-medium text-zinc-700 dark:text-zinc-300">{{ $campaign->user->name }}</span>
+                                </p>
+                            </div>
 
-                        <div class="flex gap-2 text-xs text-gray-500">
-                            <flux:icon name="users" class="w-4 h-4" />
-                            <span>
-                                {{ $campaign->users()->count() }} 
-                                @if($campaign->max_players)
-                                    / {{ $campaign->max_players }}
-                                @endif
-                                Players
-                            </span>
-                        </div>
+                            <!-- Description -->
+                            <p class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed flex-1 break-words line-clamp-4">
+                                {{ $campaign->description }}
+                            </p>
 
-                        <div class="flex justify-end">
-                            <flux:button href="{{ route('campaigns.show', $campaign) }}" size="sm" wire:navigate>
-                                {{ __('View Details') }}
-                            </flux:button>
+                            <!-- Footer Metrics & Action -->
+                            <div class="pt-4 mt-auto border-t border-zinc-100 dark:border-zinc-800 flex items-center justify-between">
+                                <div class="flex items-center gap-2 text-sm text-zinc-500 dark:text-zinc-400" title="{{ __('Players') }}">
+                                    <flux:icon name="users" variant="mini" class="w-4 h-4 text-zinc-400" />
+                                    <span class="font-medium">
+                                        {{ $campaign->users()->count() }}
+                                        @if($campaign->max_players)
+                                            <span class="text-zinc-400">/</span> {{ $campaign->max_players }}
+                                        @endif
+                                    </span>
+                                </div>
+
+                                <flux:button href="{{ route('campaigns.show', $campaign) }}" size="sm" variant="primary" wire:navigate>
+                                    {{ __('View Details') }}
+                                </flux:button>
+                            </div>
                         </div>
                     </div>
                 @endforeach

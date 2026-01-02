@@ -4,6 +4,7 @@ namespace App\Livewire\Campaigns;
 
 use Livewire\Component;
 use Livewire\Attributes\Layout;
+use Livewire\WithFileUploads;
 use App\Models\Campaign;
 use App\Models\Race;
 use App\Models\CharacterClass;
@@ -12,9 +13,12 @@ use Illuminate\Support\Facades\Auth;
 #[Layout('components.layouts.app')]
 class Create extends Component
 {
+    use WithFileUploads;
+
     public $title = '';
     public $description = '';
     public $max_players = 4;
+    public $banner;
     
     // Rules
     public $attribute_system = 'point_buy'; // point_buy, roll, standard_array
@@ -35,8 +39,10 @@ class Create extends Component
     {
         $this->validate([
             'title' => 'required|min:3|max:255',
+            'description' => 'nullable|string',
             'max_players' => 'required|integer|min:1|max:20',
             'attribute_system' => 'required|in:point_buy,roll,standard_array',
+            'banner' => 'nullable|image|max:2048',
         ]);
 
         $rules = [
@@ -58,10 +64,16 @@ class Create extends Component
             $rules['allowed_classes'] = $this->allowed_classes;
         }
 
+        $imagePath = null;
+        if ($this->banner) {
+            $imagePath = $this->banner->store('campaigns', 'public');
+        }
+
         $campaign = Campaign::create([
             'user_id' => Auth::id(),
             'title' => $this->title,
             'description' => $this->description,
+            'image_path' => $imagePath,
             'status' => 'open',
             'max_players' => $this->max_players,
             'rules' => $rules,
@@ -74,7 +86,7 @@ class Create extends Component
     {
         return view('livewire.campaigns.create', [
             'races' => Race::all(),
-            'classes' => CharacterClass::all(), // Make sure to import CharacterClass
+            'classes' => CharacterClass::all(),
         ]);
     }
 }

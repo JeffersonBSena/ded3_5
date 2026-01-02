@@ -1,5 +1,9 @@
 <div class="py-12">
     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+        <div class="mb-6">
+            <flux:button href="{{ route('campaigns.index') }}" variant="subtle" icon="arrow-left" class="!pl-0" wire:navigate>{{ __('Back to Campaigns') }}</flux:button>
+        </div>
+
         <!-- Header -->
         <div class="flex justify-between items-start">
             <div>
@@ -26,9 +30,43 @@
             </div>
         </div>
 
+        @if($campaign->image_path)
+            <div class="w-full h-64 md:h-80 overflow-hidden rounded-xl border border-zinc-200 dark:border-zinc-700 shadow-sm">
+                <img src="{{ Storage::url($campaign->image_path) }}" alt="{{ $campaign->title }}" class="w-full h-full object-cover">
+            </div>
+        @endif
+
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <!-- Main Content -->
             <div class="lg:col-span-2 space-y-6">
+                @if($isDm)
+                    <div class="p-6 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-xl space-y-4">
+                        <flux:heading size="lg">{{ __('DM Actions') }}</flux:heading>
+                        <flux:button href="{{ route('campaigns.manage', $campaign) }}" variant="primary" class="w-full" wire:navigate>
+                            {{ __('Manage Campaign') }}
+                        </flux:button>
+                    </div>
+                @elseif($enrollment)
+                    <div class="p-6 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-xl space-y-4">
+                        <flux:heading size="lg">{{ __('My Status') }}</flux:heading>
+                        <div class="flex items-center justify-between">
+                            <span>Status:</span>
+                            <flux:badge color="{{ match($enrollment->status) { 'accepted' => 'green', 'pending' => 'yellow', 'rejected' => 'red', default => 'zinc' } }}">{{ ucfirst($enrollment->status) }}</flux:badge>
+                        </div>
+                        
+                        @if($enrollment->status === 'accepted')
+                             @if($enrollment->character_id)
+                                <flux:button href="{{ route('characters.show', $enrollment->character_id) }}" variant="primary" class="w-full" wire:navigate>
+                                    {{ __('My Character Sheet') }}
+                                </flux:button>
+                             @else
+                                <flux:button variant="primary" class="w-full" disabled>
+                                    {{ __('Create Character (Coming Soon)') }}
+                                </flux:button>
+                             @endif
+                        @endif
+                    </div>
+                @endif
                 <div class="p-6 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-xl">
                     <flux:heading size="lg" class="mb-4">{{ __('Description') }}</flux:heading>
                     <div class="prose dark:prose-invert">

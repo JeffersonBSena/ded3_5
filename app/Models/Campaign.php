@@ -10,6 +10,7 @@ class Campaign extends Model
         'user_id',
         'title',
         'description',
+        'image_path',
         'status',
         'max_players',
         'rules',

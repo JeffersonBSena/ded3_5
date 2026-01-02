@@ -11,15 +11,17 @@
                 <flux:textarea wire:model="description" label="{{ __('Description') }}" placeholder="A short description of the campaign setting and premise..." />
                 
                 <flux:input wire:model="max_players" type="number" label="{{ __('Max Players') }}" min="1" max="20" />
+
+                <flux:input type="file" wire:model="banner" label="{{ __('Campaign Banner') }}" accept="image/*" />
             </div>
 
             <div class="space-y-6 p-6 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-xl">
                 <flux:heading size="lg">{{ __('Rules & Settings') }}</flux:heading>
                 
                 <flux:select wire:model.live="attribute_system" label="{{ __('Attribute Generation System') }}">
-                    <flux:option value="point_buy">{{ __('Point Buy') }}</flux:option>
-                    <flux:option value="roll">{{ __('Dice Roll') }}</flux:option>
-                    <flux:option value="standard_array">{{ __('Standard Array') }}</flux:option>
+                    <option value="point_buy">{{ __('Point Buy') }}</option>
+                    <option value="roll">{{ __('Dice Roll') }}</option>
+                    <option value="standard_array">{{ __('Standard Array') }}</option>
                 </flux:select>
 
                 <!-- Dynamic Rule Settings -->

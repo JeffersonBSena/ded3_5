@@ -22,4 +22,9 @@ class CampaignUser extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function character()
+    {
+        return $this->belongsTo(Character::class);
+    }
 }

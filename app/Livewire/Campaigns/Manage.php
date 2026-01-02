@@ -48,7 +48,9 @@ class Manage extends Component
     public function render()
     {
         return view('livewire.campaigns.manage', [
-            'enrollments' => $this->campaign->enrollments()->with('user')->get(),
+            'pendingEnrollments' => $this->campaign->enrollments()->where('status', 'pending')->with('user')->get(),
+            'acceptedEnrollments' => $this->campaign->enrollments()->where('status', 'accepted')->with(['user', 'character'])->get(),
+            'rejectedEnrollments' => $this->campaign->enrollments()->where('status', 'rejected')->with('user')->get(),
         ]);
     }
 }
