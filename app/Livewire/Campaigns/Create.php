@@ -66,7 +66,10 @@ class Create extends Component
 
         $imagePath = null;
         if ($this->banner) {
-            $imagePath = $this->banner->store('campaigns', 'public');
+            // Salvar diretamente em public/banners/
+            $filename = uniqid() . '_' . time() . '.' . $this->banner->getClientOriginalExtension();
+            $this->banner->storeAs('banners', $filename, 'public_root');
+            $imagePath = 'banners/' . $filename;
         }
 
         $campaign = Campaign::create([

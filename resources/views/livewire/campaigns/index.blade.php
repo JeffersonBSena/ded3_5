@@ -21,14 +21,14 @@
                     <div class="min-w-[20rem] max-w-[20rem] snap-center group flex flex-col bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-xl overflow-hidden transition duration-200 hover:shadow-lg dark:hover:shadow-black/50 hover:border-zinc-300 dark:hover:border-zinc-600">
                         <!-- Card Image & Status -->
                         <div class="relative h-64 w-full bg-zinc-100 dark:bg-zinc-800 overflow-hidden">
-                            @if($campaign->image_path)
-                                <img src="{{ Storage::url($campaign->image_path) }}" 
+                        @if($campaign->image_path)
+                                <img src="{{ asset($campaign->image_path) }}" 
                                      alt="{{ $campaign->title }}" 
                                      class="w-full h-full object-cover transition duration-500 group-hover:scale-105">
                             @else
-                                <div class="w-full h-full flex items-center justify-center text-zinc-300 dark:text-zinc-700">
-                                    <flux:icon name="photo" class="w-12 h-12 opacity-50" />
-                                </div>
+                                <img src="{{ asset('banners/bannerDefault.png') }}" 
+                                     alt="{{ $campaign->title }}" 
+                                     class="w-full h-full object-cover transition duration-500 group-hover:scale-105">
                             @endif
 
                             <div class="absolute top-3 right-3">

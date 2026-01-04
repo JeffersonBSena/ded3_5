@@ -17,7 +17,7 @@ class Show extends Component
         $this->campaign = $campaign;
     }
 
-    public function join()
+    public function join(\App\Services\Contracts\WhatsAppServiceInterface $whatsappService)
     {
         if ($this->campaign->enrollments()->where('user_id', Auth::id())->exists()) {
             return;
@@ -27,6 +27,14 @@ class Show extends Component
             'user_id' => Auth::id(),
             'status' => 'pending',
         ]);
+
+        // Notify Campaign Master
+        $owner = $this->campaign->user;
+        if ($owner->phone) {
+            $user = Auth::user();
+            $message = "O usuário {$user->name} solicitou entrar na sua campanha {$this->campaign->title}.";
+            $whatsappService->sendMessage($owner->phone, $message);
+        }
 
         $this->dispatch('campaign-applied'); // Optional: show toast
     }

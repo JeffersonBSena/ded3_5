@@ -42,5 +42,6 @@ Route::middleware(['auth'])->group(function () {
     Route::get('campaigns/{campaign}', App\Livewire\Campaigns\Show::class)->name('campaigns.show');
     Route::get('/campaigns/{campaign}/manage', \App\Livewire\Campaigns\Manage::class)->name('campaigns.manage');
 
+    Route::get('/campaigns/{campaign}/characters/create', \App\Livewire\Characters\Create::class)->name('characters.create');
     Route::get('/characters/{character}', \App\Livewire\Characters\Sheet::class)->name('characters.show');
 });

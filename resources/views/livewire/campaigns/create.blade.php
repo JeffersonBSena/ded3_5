@@ -36,11 +36,11 @@
             </div>
 
             <div class="space-y-6 p-6 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-xl">
-                <flux:heading size="lg">{{ __('Restrictions (Optional)') }}</flux:heading>
-                <flux:subheading>{{ __('Leave empty to allow all.') }}</flux:subheading>
+                <flux:heading size="lg">{{ __('Restrições (Opcional)') }}</flux:heading>
+                <flux:subheading>{{ __('Selecione itens para BLOQUEAR. Deixe vazio para permitir todos.') }}</flux:subheading>
 
                 <div>
-                    <flux:label>{{ __('Allowed Races') }}</flux:label>
+                    <flux:label>{{ __('Raças Restritas (Bloqueadas)') }}</flux:label>
                     <div class="grid grid-cols-2 md:grid-cols-3 gap-2 mt-2">
                         @foreach($races as $race)
                             <flux:checkbox wire:model="allowed_races" value="{{ $race->id }}" label="{{ $race->name }}" />
@@ -49,7 +49,7 @@
                 </div>
 
                 <div class="mt-4">
-                    <flux:label>{{ __('Allowed Classes') }}</flux:label>
+                    <flux:label>{{ __('Classes Restritas (Bloqueadas)') }}</flux:label>
                     <div class="grid grid-cols-2 md:grid-cols-3 gap-2 mt-2">
                         @foreach($classes as $class)
                             <flux:checkbox wire:model="allowed_classes" value="{{ $class->id }}" label="{{ $class->name }}" />

@@ -30,11 +30,13 @@
             </div>
         </div>
 
-        @if($campaign->image_path)
-            <div class="w-full h-64 md:h-80 overflow-hidden rounded-xl border border-zinc-200 dark:border-zinc-700 shadow-sm">
-                <img src="{{ Storage::url($campaign->image_path) }}" alt="{{ $campaign->title }}" class="w-full h-full object-cover">
-            </div>
-        @endif
+        <div class="w-full h-64 md:h-80 overflow-hidden rounded-xl border border-zinc-200 dark:border-zinc-700 shadow-sm">
+            @if($campaign->image_path)
+                <img src="{{ asset($campaign->image_path) }}" alt="{{ $campaign->title }}" class="w-full h-full object-cover">
+            @else
+                <img src="{{ asset('banners/bannerDefault.png') }}" alt="{{ $campaign->title }}" class="w-full h-full object-cover">
+            @endif
+        </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <!-- Main Content -->
@@ -60,8 +62,8 @@
                                     {{ __('My Character Sheet') }}
                                 </flux:button>
                              @else
-                                <flux:button variant="primary" class="w-full" disabled>
-                                    {{ __('Create Character (Coming Soon)') }}
+                                <flux:button href="{{ route('characters.create', $campaign) }}" variant="primary" class="w-full" wire:navigate>
+                                    {{ __('Create Character') }}
                                 </flux:button>
                              @endif
                         @endif

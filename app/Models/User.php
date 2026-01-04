@@ -18,6 +18,8 @@ class User extends Authenticatable
         'name',
         'phone',
         'email',
+        'whatsapp',
+        'birthdate',
         'password',
     ];
 
@@ -37,6 +39,7 @@ class User extends Authenticatable
         return [
             'phone_verified_at' => 'datetime',
             'email_verified_at' => 'datetime',
+            'birthdate' => 'date',
             'password' => 'hashed',
         ];
     }
