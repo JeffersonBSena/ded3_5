@@ -12,4 +12,8 @@ class CharacterClass extends Model
     {
         return $this->belongsTo(DiceType::class, 'hit_die_id');
     }
+    public function skills()
+    {
+        return $this->belongsToMany(Skill::class, 'class_skills', 'class_id', 'skill_id');
+    }
 }

@@ -19,6 +19,7 @@ class Character extends Model
         'experience_points',
         'hp_current',
         'hp_max',
+        'skills_finalized_at_level',
     ];
 
     public function race()
@@ -35,10 +36,62 @@ class Character extends Model
     public function abilities()
     {
         return $this->belongsToMany(Ability::class, 'character_abilities')
-                    ->withPivot('base_score', 'temp_score');
+                    ->withPivot('base_score', 'temp_score', 'magic_modifier', 'misc_modifier');
+    }
+    public function skills()
+    {
+        return $this->belongsToMany(Skill::class, 'character_skills')
+                    ->withPivot('ranks', 'misc_mod');
     }
     
-    // Accessor to get abilities with racial modifiers
+    public function feats()
+    {
+        return $this->belongsToMany(Feat::class, 'character_feats')
+                    ->withPivot('notes')
+                    ->withTimestamps();
+    }
+
+    public function getFeatSlotsAttribute()
+    {
+        // Base slots: 1 (at Lv 1) + 1 every 3 levels (3, 6, 9...)
+        // Formula: 1 + floor(TotalLevel / 3) 
+        // Wait, standard is 1st, 3rd, 6th.
+        // Lv 1: 1
+        // Lv 2: 1
+        // Lv 3: 2
+        // Formula: 1 + floor(TotalLevel / 3) IS Correct.
+
+        $totalLevel = 0;
+        $fighterLevel = 0;
+
+        foreach ($this->classes as $class) {
+            $totalLevel += $class->pivot->level;
+            if ($class->name === 'Guerreiro') {
+                $fighterLevel = $class->pivot->level;
+            }
+        }
+        if ($totalLevel == 0) $totalLevel = 1; // Fallback
+
+        $slots = 1 + floor($totalLevel / 3);
+
+        // Human bonus: +1 at Lv 1
+        if ($this->race && stripos($this->race->name, 'Humano') !== false) {
+            $slots += 1;
+        }
+
+        // Fighter Bonus Feats
+        // Lv 1, 2, 4, 6, 8, 10...
+        if ($fighterLevel > 0) {
+            if ($fighterLevel == 1) {
+                $slots += 1;
+            } elseif ($fighterLevel >= 2) {
+                // 1 (Lv1) + 1 (Lv2) + (Lv-2)/2
+                $slots += 2 + floor(($fighterLevel - 2) / 2);
+            }
+        }
+        
+        return $slots;
+    }
     public function getAttributesWithModifiersAttribute()
     {
         $abilities = $this->abilities;
@@ -46,18 +99,17 @@ class Character extends Model
         
         return $abilities->map(function ($ability) use ($raceModifiers) {
             $base = $ability->pivot->base_score;
-            $temp = $ability->pivot->temp_score;
+            $magic = $ability->pivot->magic_modifier ?? 0;
+            $misc = $ability->pivot->misc_modifier ?? 0;
             $raceMod = $raceModifiers[$ability->id] ?? 0;
             
-            // In 3.5, racial modifiers affect the "base" for the purpose of calculation, but temp scores override or stack.
-            // Simplified: Total = Base + Race + (Temp - Base if Temp exists? No, temp usually replaces or adds)
-            // Sticking to: Final = Base + RaceMod
-            
-            $final = $base + $raceMod;
+            $final = $base + $raceMod + $magic + $misc;
             
             $ability->final_score = $final;
             $ability->modifier = floor(($final - 10) / 2);
             $ability->race_mod = $raceMod;
+            $ability->magic_mod = $magic;
+            $ability->misc_mod = $misc;
             
             return $ability;
         });
